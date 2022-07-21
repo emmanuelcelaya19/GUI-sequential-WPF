@@ -96,8 +96,8 @@ namespace HipotWalalightProject
 
         private void FnInitialiceTest()
         {
-            lst_TestProcess.Items.Clear();
-            lbl_TestStatus.Content = "Running...";
+            DataTestResults.Items.Clear();
+            lbl_TestStatus.Content = "RUNNING...";
             lbl_TestStatus.Background = Brushes.Orange;
         }
 
@@ -107,11 +107,12 @@ namespace HipotWalalightProject
             foreach (test RunTestStep in TestFlow)
             {
                 if (RunTestStep.TestEnable == true)
-                { 
-                    lst_TestProcess.Items.Add(new TestStep { TestStepName = RunTestStep.TestName,TestStepStatus = "PASS" });
+                {
+                    DataTestResults.Items.Add(new TestStep {TestStepName = RunTestStep.TestName,TestStepStatus = "PASS" });
+
                 }
             }
-
+;
             return false;
         }
 
@@ -272,8 +273,12 @@ namespace HipotWalalightProject
             return Found;
         }
 
+
         #endregion
 
+        private void lst_TestFlowConfig_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
 
+        }
     }
 }

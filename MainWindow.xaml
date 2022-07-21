@@ -27,24 +27,38 @@
                 </Label.Effect>
             </Label>
             <GroupBox Grid.Column="1" Header="Test Flow Configuration" Grid.Row="1" Margin="459,55,10,95">
-                <ListView x:Name="lst_TestFlowConfig" d:ItemsSource="{d:SampleData ItemCount=2}">
+                <ListView x:Name="lst_TestFlowConfig" d:ItemsSource="{d:SampleData ItemCount=2}" BorderBrush="#FF0044F6" Background="{x:Null}" BorderThickness="0,0,0,0" Grid.IsSharedSizeScope="True" OpacityMask="#FF2F43C0">
                     <ListView.View>
-                        <GridView>
-                            <GridViewColumn Header="Test Name" DisplayMemberBinding="{Binding TestName}"/>
+                        <GridView AllowsColumnReorder="False">
+                            <GridViewColumn Header="Test Name" Width="174" DisplayMemberBinding="{Binding TestName}"/>
                             <GridViewColumn Header="Enable" DisplayMemberBinding="{Binding TestEnable}"/>
                         </GridView>
                     </ListView.View>
                 </ListView>
             </GroupBox>
-            <GroupBox Grid.Column="1" Header="Test Process View" Grid.Row="1" Margin="10,55,270,95">
-                <ListView x:Name="lst_TestProcess" d:ItemsSource="{d:SampleData ItemCount=5}">
-                    <ListView.View>
-                        <GridView x:Name="GridViewProcess">
-                            <GridViewColumn x:Name="GridViewColumnTestName" Header="Test" Width="180" DisplayMemberBinding="{Binding TestStepName}"/>
-                            <GridViewColumn x:Name="GridViewColumnTestSatus" Header="Status" DisplayMemberBinding="{Binding TestStepStatus}"/>
-                        </GridView>
-                    </ListView.View>
-                </ListView>
+            <GroupBox Grid.Column="1" Header="Test Process View" Grid.Row="1" Margin="1,55,270,95">
+                <DataGrid x:Name="DataTestResults" d:ItemsSource="{d:SampleData ItemCount=2}" CanUserAddRows="False" CanUserDeleteRows="False" CanUserReorderColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False" CanUserSortColumns="False" BorderBrush="#FF042271" IsReadOnly="True" Foreground="#FF042271" HorizontalGridLinesBrush="#FF042271" BorderThickness="1,1,1,1" HorizontalAlignment="Center" Width="441" RowDetailsVisibilityMode="VisibleWhenSelected" UseLayoutRounding="True" EnableColumnVirtualization="True" GridLinesVisibility="None">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn x:Name="DataGridTextColumnStepName" Header="Step Name" Width="200" Binding="{Binding Path=TestStepName}"/>
+                        <DataGridTextColumn Header="Step Status" Binding="{Binding Path=TestStepStatus}" CanUserReorder="False" CanUserResize="False" CanUserSort="False">
+                            <DataGridTextColumn.CellStyle>
+                                <Style TargetType="{x:Type DataGridCell}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Path=TestStepStatus}" Value="PASS">
+                                            <Setter Property="Background" Value="Green" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Path=TestStepStatus}" Value="FAIL">
+                                            <Setter Property="Background" Value="Red" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Path=TestStepStatus}" Value="RUNNING">
+                                            <Setter Property="Background" Value="Orange"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </DataGridTextColumn.CellStyle>
+                        </DataGridTextColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
             </GroupBox>
             <GroupBox Grid.Column="1" Header="Equipment Status" Margin="463,0,10,405" Grid.RowSpan="2">
                 <Canvas HorizontalAlignment="Left" Height="56" Margin="104,0,0,0" VerticalAlignment="Top" Width="124">
