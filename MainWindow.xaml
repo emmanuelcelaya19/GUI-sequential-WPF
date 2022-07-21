@@ -39,9 +39,9 @@
             <GroupBox Grid.Column="1" Header="Test Process View" Grid.Row="1" Margin="10,55,270,95">
                 <ListView x:Name="lst_TestProcess" d:ItemsSource="{d:SampleData ItemCount=5}">
                     <ListView.View>
-                        <GridView>
-                            <GridViewColumn Header="Test" Width="180" DisplayMemberBinding="{Binding TestStepName}"/>
-                            <GridViewColumn Header="Status" DisplayMemberBinding="{Binding TestStepStatus}"/>
+                        <GridView x:Name="GridViewProcess">
+                            <GridViewColumn x:Name="GridViewColumnTestName" Header="Test" Width="180" DisplayMemberBinding="{Binding TestStepName}"/>
+                            <GridViewColumn x:Name="GridViewColumnTestSatus" Header="Status" DisplayMemberBinding="{Binding TestStepStatus}"/>
                         </GridView>
                     </ListView.View>
                 </ListView>

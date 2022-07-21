@@ -15,7 +15,7 @@ using System.Windows.Navigation;
 using System.Runtime.InteropServices;
 using Excel = Microsoft.Office.Interop.Excel;
 using Newtonsoft.Json;
-
+using System.Threading;
 
 namespace HipotWalalightProject
 {
@@ -86,7 +86,7 @@ namespace HipotWalalightProject
             {
                 FnInitialiceTest();
                 TestSatus = FnRunTest();
-                FnEndTest();
+                FnEndTest(TestSatus);
             }
             else
             {
@@ -107,18 +107,29 @@ namespace HipotWalalightProject
             foreach (test RunTestStep in TestFlow)
             {
                 if (RunTestStep.TestEnable == true)
-                {
+                { 
                     lst_TestProcess.Items.Add(new TestStep { TestStepName = RunTestStep.TestName,TestStepStatus = "PASS" });
                 }
             }
 
-            return true;
+            return false;
         }
 
-        private void FnEndTest()
+
+        private void FnEndTest(bool PassFail)
         {
-            lbl_TestStatus.Content = "PASS";
-            lbl_TestStatus.Background = Brushes.GreenYellow;
+
+            if (PassFail)
+            {
+                lbl_TestStatus.Content = "PASS";
+                lbl_TestStatus.Background = Brushes.GreenYellow;
+            }
+            else
+            {
+                lbl_TestStatus.Content = "FAIL";
+                lbl_TestStatus.Background = Brushes.Red;
+            }
+
         }
 
         private void FnWrongSN()
