@@ -30,4 +30,3 @@ C:\Users\emman\OneDrive - fceo.mx\Documentos\FCEO\Plenty\scripts\HipotWalalightP
 C:\Users\emman\OneDrive - fceo.mx\Documentos\FCEO\Plenty\scripts\HipotWalalightProject\obj\Debug\net6.0-windows\Interop.Microsoft.Office.Interop.Excel.dll
 C:\Users\emman\OneDrive - fceo.mx\Documentos\FCEO\Plenty\scripts\HipotWalalightProject\obj\Debug\net6.0-windows\HipotWalalightProject.csproj.ResolveComReference.cache
 C:\Users\emman\OneDrive - fceo.mx\Documentos\FCEO\Plenty\scripts\HipotWalalightProject\bin\Debug\net6.0-windows\Newtonsoft.Json.dll
-C:\Users\emman\OneDrive - fceo.mx\Documentos\FCEO\Plenty\scripts\HipotWalalightProject\obj\Debug\net6.0-windows\HipotWalalightProject.csproj.AssemblyReference.cache
