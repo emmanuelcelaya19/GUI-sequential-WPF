@@ -21,7 +21,7 @@
                     <ImageBrush Stretch="UniformToFill" TileMode="Tile" ImageSource="/FCEO_logo.png"/>
                 </Image.OpacityMask>
             </Image>
-            <Label x:Name="lbl_TestStatus" Grid.Column="1" Content="Waiting..." HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="334" Height="76" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" FontStyle="Normal" FontWeight="Regular" FontFamily="Segoe UI Semibold" FontStretch="UltraCondensed" FontSize="30" Background="#FFB1B1B1" UseLayoutRounding="True" Margin="62,357,0,0" Padding="5,5,5,5">
+            <Label x:Name="lbl_TestStatus" Grid.Column="1" Content="Waiting..." HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="334" Height="76" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" FontStyle="Normal" FontWeight="Regular" FontFamily="Segoe UI Semibold" FontStretch="UltraCondensed" FontSize="30" Background="#FFB1B1B1" UseLayoutRounding="True" Margin="62,357,0,0" Padding="5,5,5,5" MouseLeftButtonUp="lbl_TestStatus_MouseLeftButtonUp">
                 <Label.Effect>
                     <DropShadowEffect/>
                 </Label.Effect>
@@ -37,10 +37,10 @@
                 </ListView>
             </GroupBox>
             <GroupBox Grid.Column="1" Header="Test Process View" Grid.Row="1" Margin="1,55,270,95">
-                <DataGrid x:Name="DataTestResults" d:ItemsSource="{d:SampleData ItemCount=2}" CanUserAddRows="False" CanUserDeleteRows="False" CanUserReorderColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False" CanUserSortColumns="False" BorderBrush="#FF042271" IsReadOnly="True" Foreground="#FF042271" HorizontalGridLinesBrush="#FF042271" BorderThickness="1,1,1,1" HorizontalAlignment="Center" Width="441" RowDetailsVisibilityMode="VisibleWhenSelected" UseLayoutRounding="True" EnableColumnVirtualization="True" GridLinesVisibility="None">
+                <DataGrid x:Name="DataTestResults" d:ItemsSource="{d:SampleData ItemCount=2}" CanUserAddRows="False" CanUserDeleteRows="False" CanUserReorderColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False" CanUserSortColumns="False" BorderBrush="#FF042271" IsReadOnly="True" Foreground="#FF042271" HorizontalGridLinesBrush="#FF042271" BorderThickness="1,1,1,1" HorizontalAlignment="Center" Width="441" RowDetailsVisibilityMode="VisibleWhenSelected" UseLayoutRounding="True" EnableColumnVirtualization="True" GridLinesVisibility="None" HorizontalContentAlignment="Center">
                     <DataGrid.Columns>
                         <DataGridTextColumn x:Name="DataGridTextColumnStepName" Header="Step Name" Width="200" Binding="{Binding Path=TestStepName}"/>
-                        <DataGridTextColumn Header="Step Status" Binding="{Binding Path=TestStepStatus}" CanUserReorder="False" CanUserResize="False" CanUserSort="False">
+                        <DataGridTextColumn Header="Step Status" Binding="{Binding Path=TestStepStatus}" CanUserReorder="False" CanUserResize="False" CanUserSort="False" Foreground="White">
                             <DataGridTextColumn.CellStyle>
                                 <Style TargetType="{x:Type DataGridCell}">
                                     <Style.Triggers>
@@ -72,9 +72,9 @@
             <GroupBox Grid.Column="1" Header="Unit Data" Margin="10,0,270,405" Grid.RowSpan="2">
                 <Canvas HorizontalAlignment="Center" Height="26" VerticalAlignment="Center" Width="366">
                     <Canvas Height="26" Canvas.Left="0" Canvas.Top="0" Width="356">
-                        <TextBox x:Name="txt_SerialNumber" TextWrapping="Wrap" Text="Enter Serial Number" Width="196" Height="21" ForceCursor="True" VerticalContentAlignment="Center" Canvas.Left="86" Canvas.Top="3"/>
+                        <TextBox x:Name="txt_SerialNumber" TextWrapping="Wrap" Text="Enter Serial Number" Width="196" Height="21" ForceCursor="True" VerticalContentAlignment="Center" Canvas.Left="86" Canvas.Top="3" AllowDrop="False" KeyDown="txt_SerialNumber_KeyDown"/>
                         <Label Content="Serial Number" Width="86" Height="26"/>
-                        <Button Content="Start" Canvas.Left="287" Canvas.Top="3" Width="69" Click="Button_Click"/>
+                        <Button x:Name="btn_start" Content="Start" Canvas.Left="287" Canvas.Top="3" Width="69" Click="Button_Click"/>
                     </Canvas>
                 </Canvas>
             </GroupBox>

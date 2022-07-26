@@ -26,6 +26,7 @@ namespace HipotWalalightProject
     {
         SerialPort serialPort = new SerialPort();
         bool HipotConnection = false;
+        string OMNIAPort = "";
         List<test> TestFlow = new List<test>();
         string SerialNumber = "";
         bool AlarmStatus = false;
@@ -36,33 +37,8 @@ namespace HipotWalalightProject
             InitializeComponent();
         }
 
-        #region Events
 
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            main();
-
-        }
-
-        private void HipotWalalight_Loaded(object sender, RoutedEventArgs e)
-        {
-            HipotConnection = FnConnectSerialPort();
-            FnInitialization();
-            TestFlow = FnReadConfigDocument();
-            FnVisualFlow(TestFlow);
-        }
-
-
-        private void btn_Connect_Click(object sender, RoutedEventArgs e)
-        {
-            HipotConnection = FnConnectSerialPort();
-        }
-
-        #endregion
-
-
-        #region Functions
-
+        #region Class
         public class test
         {
             public string TestName { get; set; }
@@ -76,11 +52,15 @@ namespace HipotWalalightProject
             public string TestStepName { get; set; }
             public string TestStepStatus { get; set; }
         }
+        #endregion Class
 
+
+
+        #region Functions
         private void main()
         {
             SerialNumber = txt_SerialNumber.Text;
-            bool CorrectSN = SerialNumber.Contains("JGH");
+            bool CorrectSN = SerialNumber.Contains("JGH");// && SerialNumber.Length==10;
 
             if (CorrectSN)
             {
@@ -90,6 +70,7 @@ namespace HipotWalalightProject
             }
             else
             {
+                FnInitialiceTest();
                 FnWrongSN();
             }
         }
@@ -103,19 +84,147 @@ namespace HipotWalalightProject
 
         private bool FnRunTest()
         {
+            string StepResult = "";
+            int i = 0;
+            bool stop = false;
 
-            foreach (test RunTestStep in TestFlow)
+            foreach (test RunTest in TestFlow)
             {
-                if (RunTestStep.TestEnable == true)
+                if (RunTest.TestEnable == true)
                 {
-                    DataTestResults.Items.Add(new TestStep {TestStepName = RunTestStep.TestName,TestStepStatus = "PASS" });
+                    
+                    DataTestResults.Items.Insert(i, new TestStep { TestStepName = RunTest.TestName, TestStepStatus = "RUNNING" });
+
+                    switch (RunTest.TestName)
+                    {
+                        case "CHECK_INTERLOCK":
+                            stop = true;    
+                            StepResult = FnCheckInterlock("RI?\r");
+                            DataTestResults.Items.RemoveAt(i);
+                            DataTestResults.Items.Insert(i, new TestStep { TestStepName = RunTest.TestName, TestStepStatus = StepResult });
+                            i++;
+                            break;
+                        case "HIPOT_TEST":
+                            StepResult = FnHipotTest("TEST\r");
+                            DataTestResults.Items.RemoveAt(i);
+                            DataTestResults.Items.Insert(i, new TestStep { TestStepName = RunTest.TestName, TestStepStatus = StepResult });
+                            i++;
+                            break;
+                        case "HIPOT_RESET":
+                            StepResult = FnHipotReset("RESET\r");
+                            DataTestResults.Items.RemoveAt(i);
+                            DataTestResults.Items.Insert(i, new TestStep { TestStepName = RunTest.TestName, TestStepStatus = StepResult });
+                            i++;
+                            break;
+                        default:
+                            StepResult = "FAIL";
+                            DataTestResults.Items.RemoveAt(i);
+                            DataTestResults.Items.Insert(i, new TestStep { TestStepName = RunTest.TestName, TestStepStatus = StepResult });
+                            MessageBox.Show("Invalid Test Step from file! Steps must be: <CHECK_INTERLOCK, HIPOT_TEST & HIPOT_RESET/>", "Invalid Test flow", MessageBoxButton.OK, MessageBoxImage.Error);
+                            return false;
+
+            
+                    }
 
                 }
+
+            if (stop == true && StepResult == "FAIL")
+                    break;
             }
-;
+;           
+            if(DataTestResults.Items.Contains("FAIL"))
             return false;
+            else
+            return true;
         }
 
+
+        private string FnCheckInterlock(string command)
+        {
+            string Stepresult = "FAIL";
+            int tries = 2;
+            int i = 1;
+            string HIPOTResponce;
+  
+
+            while (true)
+            {
+                HIPOTResponce = SendCommand(command);
+                if (HIPOTResponce == "1")
+                {
+                    Stepresult = "PASS";
+                    break;
+                }
+                else if (HIPOTResponce == "NO HIPOT CONNECTION")
+                {
+                    Stepresult = "FAIL";
+                    break;
+                }
+                else if (i <= tries)
+                {
+                    string messageBoxText = "Retry Test?";
+                    string caption = "NO interlock Detected! Retry?";
+                    MessageBoxButton button = MessageBoxButton.YesNo;
+                    MessageBoxImage icon = MessageBoxImage.Warning;
+                    MessageBoxResult result;
+
+                    result = MessageBox.Show(messageBoxText, caption, button, icon, MessageBoxResult.Yes);
+                    if (result == MessageBoxResult.No)
+                    {
+                        Stepresult = "FAIL";
+                        break;
+                    }
+                    i++;
+                }
+                    break;
+            }
+
+            return Stepresult;
+
+        }
+
+
+        private string FnHipotTest(string command)
+        {
+            //SendCommand(command);
+            return "PASS";
+        }
+
+
+        private string FnHipotReset(string command)
+        {
+            //SendCommand(command);
+            return "PASS";
+        }
+
+
+
+        private string SendCommand(string SendStrig)
+        {
+            string resultString = "";
+            serialPort.BaudRate = 9600;
+            serialPort.Parity = Parity.None;
+            serialPort.PortName = "COM2";
+//            serialPort.PortName = OMNIAPort;
+            serialPort.ReadTimeout = 5;
+            try
+            {
+
+                serialPort.Open();
+                serialPort.WriteLine(SendStrig);
+                while (serialPort.BytesToRead < 0) continue;
+                string responce = serialPort.ReadLine();
+                serialPort.Close();
+                resultString = responce;
+            }
+            catch (Exception)
+            {
+                resultString = "NO HIPOT CONNECTION";
+                MessageBox.Show("NO HIPOT Communication", "No Device Responce", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+
+            return resultString;
+        }
 
         private void FnEndTest(bool PassFail)
         {
@@ -123,7 +232,7 @@ namespace HipotWalalightProject
             if (PassFail)
             {
                 lbl_TestStatus.Content = "PASS";
-                lbl_TestStatus.Background = Brushes.GreenYellow;
+                lbl_TestStatus.Background = Brushes.Green;
             }
             else
             {
@@ -135,9 +244,9 @@ namespace HipotWalalightProject
 
         private void FnWrongSN()
         {
+            MessageBox.Show("Validate Unit Serial Number", "Invalid Serial Number!", MessageBoxButton.OK, MessageBoxImage.Error);
             lbl_TestStatus.Content = "Waiting...";
             lbl_TestStatus.Background = Brushes.Gray;
-            MessageBox.Show("Validate Unit Serial Number", "Invalid Serial Number!", MessageBoxButton.OK, MessageBoxImage.Error);
             txt_SerialNumber.Focus();
             txt_SerialNumber.SelectAll();
         }
@@ -246,6 +355,7 @@ namespace HipotWalalightProject
                     serialPort.Close();
                     if (responce.Contains("OMNIA"))
                     {
+                        OMNIAPort = PortName;
                         Found = true;
                         break;
                     }
@@ -258,6 +368,8 @@ namespace HipotWalalightProject
             }
             if (!Found)
             {
+                //txt_SerialNumber.IsEnabled = false;
+               // btn_start.IsEnabled = false;
                 btn_Connect.Visibility = Visibility.Visible;
                 lbl_HipotStatus.Content = "Offline";
                 lbl_HipotStatus.Background = Brushes.Red;
@@ -266,6 +378,8 @@ namespace HipotWalalightProject
             }
             else
             {
+               // txt_SerialNumber.IsEnabled = true;
+                //btn_start.IsEnabled = true;
                 btn_Connect.Visibility = Visibility.Hidden;
                 lbl_HipotStatus.Content = "Online";
                 lbl_HipotStatus.Background = Brushes.Green;
@@ -276,9 +390,56 @@ namespace HipotWalalightProject
 
         #endregion
 
-        private void lst_TestFlowConfig_SelectionChanged(object sender, SelectionChangedEventArgs e)
+
+        #region Events
+
+        private void txt_SerialNumber_KeyDown(object sender, KeyEventArgs e)
         {
+            if (e.Key == Key.Enter)
+                main();
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            main();
 
         }
+
+        private void lbl_TestStatus_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            if (lbl_TestStatus.Content == "RUNNING")
+            {
+                string messageBoxText = "Stop Test?";
+                string caption = "Test";
+                MessageBoxButton button = MessageBoxButton.YesNo;
+                MessageBoxImage icon = MessageBoxImage.Warning;
+                MessageBoxResult result;
+
+                result = MessageBox.Show(messageBoxText, caption, button, icon, MessageBoxResult.Yes);
+                if (result == MessageBoxResult.Yes)
+                {
+                    // StopTest = true;
+                }
+
+            }
+        }
+
+        private void HipotWalalight_Loaded(object sender, RoutedEventArgs e)
+        {
+            HipotConnection = FnConnectSerialPort();
+            FnInitialization();
+            TestFlow = FnReadConfigDocument();
+            FnVisualFlow(TestFlow);
+        }
+
+
+        private void btn_Connect_Click(object sender, RoutedEventArgs e)
+        {
+            HipotConnection = FnConnectSerialPort();
+        }
+
+        #endregion
+
+
     }
 }
