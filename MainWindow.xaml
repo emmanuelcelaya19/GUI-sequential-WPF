@@ -5,7 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:HipotWalalightProject"
         mc:Ignorable="d"
-        Title="Hipot Walalight" Height="518" Width="746" Background="White" Loaded="HipotWalalight_Loaded" WindowStyle="SingleBorderWindow" UseLayoutRounding="False" MaxWidth="746" MaxHeight="518" MinHeight="518" MinWidth="745" HorizontalAlignment="Center" VerticalAlignment="Center" BorderBrush="Black" ResizeMode="CanResize">
+        Title="Hipot Walalight" Height="518" Width="746" Background="White" Loaded="HipotWalalight_Loaded" WindowStyle="SingleBorderWindow" UseLayoutRounding="False" MaxWidth="746" MaxHeight="518" MinHeight="518" MinWidth="745" HorizontalAlignment="Center" VerticalAlignment="Center" BorderBrush="Black" ResizeMode="CanResize" Closed="HipotWalalight_Closed">
+
+
     <Grid x:Name="Hipot_Walalight">
         <Grid>
             <Grid.ColumnDefinitions>
@@ -21,13 +23,13 @@
                     <ImageBrush Stretch="UniformToFill" TileMode="Tile" ImageSource="/FCEO_logo.png"/>
                 </Image.OpacityMask>
             </Image>
-            <Label x:Name="lbl_TestStatus" Grid.Column="1" Content="Waiting..." HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="334" Height="76" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" FontStyle="Normal" FontWeight="Regular" FontFamily="Segoe UI Semibold" FontStretch="UltraCondensed" FontSize="30" Background="#FFB1B1B1" UseLayoutRounding="True" Margin="62,357,0,0" Padding="5,5,5,5" MouseLeftButtonUp="lbl_TestStatus_MouseLeftButtonUp">
+            <Label x:Name="lbl_TestStatus" Grid.Column="1" Content="Waiting..." HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="334" Height="76" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" FontStyle="Normal" FontWeight="Regular" FontFamily="Segoe UI Semibold" FontStretch="UltraCondensed" FontSize="30" UseLayoutRounding="True" Margin="62,357,0,0" Padding="5,5,5,5" MouseLeftButtonDown="lbl_TestStatus_MouseLeftButtonDown" Background="Gray">
                 <Label.Effect>
                     <DropShadowEffect/>
                 </Label.Effect>
             </Label>
             <GroupBox Grid.Column="1" Header="Test Flow Configuration" Grid.Row="1" Margin="459,55,10,95">
-                <ListView x:Name="lst_TestFlowConfig" d:ItemsSource="{d:SampleData ItemCount=2}" BorderBrush="#FF0044F6" Background="{x:Null}" BorderThickness="0,0,0,0" Grid.IsSharedSizeScope="True" OpacityMask="#FF2F43C0">
+                <ListView x:Name="lst_TestFlowConfig" d:ItemsSource="{d:SampleData ItemCount=2}" BorderBrush="#FF0044F6" Background="{x:Null}" BorderThickness="0,0,0,0" Grid.IsSharedSizeScope="True" OpacityMask="#FF2F43C0" MouseEnter="lst_TestFlowConfig_MouseEnter" MouseDoubleClick="lst_TestFlowConfig_MouseDoubleClick">
                     <ListView.View>
                         <GridView AllowsColumnReorder="False">
                             <GridViewColumn Header="Test Name" Width="174" DisplayMemberBinding="{Binding TestName}"/>
@@ -37,21 +39,24 @@
                 </ListView>
             </GroupBox>
             <GroupBox Grid.Column="1" Header="Test Process View" Grid.Row="1" Margin="1,55,270,95">
-                <DataGrid x:Name="DataTestResults" d:ItemsSource="{d:SampleData ItemCount=2}" CanUserAddRows="False" CanUserDeleteRows="False" CanUserReorderColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False" CanUserSortColumns="False" BorderBrush="#FF042271" IsReadOnly="True" Foreground="#FF042271" HorizontalGridLinesBrush="#FF042271" BorderThickness="1,1,1,1" HorizontalAlignment="Center" Width="441" RowDetailsVisibilityMode="VisibleWhenSelected" UseLayoutRounding="True" EnableColumnVirtualization="True" GridLinesVisibility="None" HorizontalContentAlignment="Center">
+                <DataGrid x:Name="DataTestResults" CanUserAddRows="False" CanUserDeleteRows="False" CanUserReorderColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False" CanUserSortColumns="False" BorderBrush="#FF042271" IsReadOnly="True" Foreground="#FF042271" HorizontalGridLinesBrush="#FF042271" BorderThickness="1,1,1,1" HorizontalAlignment="Center" Width="441" RowDetailsVisibilityMode="VisibleWhenSelected" UseLayoutRounding="True" EnableColumnVirtualization="True" GridLinesVisibility="None" HorizontalContentAlignment="Center">
                     <DataGrid.Columns>
-                        <DataGridTextColumn x:Name="DataGridTextColumnStepName" Header="Step Name" Width="200" Binding="{Binding Path=TestStepName}"/>
-                        <DataGridTextColumn Header="Step Status" Binding="{Binding Path=TestStepStatus}" CanUserReorder="False" CanUserResize="False" CanUserSort="False" Foreground="White">
+                        <DataGridTextColumn x:Name="DataGridTextColumnStepName" Header="Step Name" Width="200" Binding="{Binding Path=ColumnStepName}"/>
+                        <DataGridTextColumn x:Name="DataGridTextColumnStepStatus" Header="Step Status" Binding="{Binding Path=ColumnStepStatus}" CanUserReorder="False" CanUserResize="False" CanUserSort="False" Foreground="White">
                             <DataGridTextColumn.CellStyle>
                                 <Style TargetType="{x:Type DataGridCell}">
                                     <Style.Triggers>
-                                        <DataTrigger Binding="{Binding Path=TestStepStatus}" Value="PASS">
+                                        <DataTrigger Binding="{Binding Path=ColumnStepStatus}" Value="PASS">
                                             <Setter Property="Background" Value="Green" />
                                         </DataTrigger>
-                                        <DataTrigger Binding="{Binding Path=TestStepStatus}" Value="FAIL">
+                                        <DataTrigger Binding="{Binding Path=ColumnStepStatus}" Value="FAIL">
                                             <Setter Property="Background" Value="Red" />
                                         </DataTrigger>
-                                        <DataTrigger Binding="{Binding Path=TestStepStatus}" Value="RUNNING">
+                                        <DataTrigger Binding="{Binding Path=ColumnStepStatus}" Value="RUNNING">
                                             <Setter Property="Background" Value="Orange"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Path=ColumnStepStatus}" Value="ABORTED">
+                                            <Setter Property="Background" Value="Blue"/>
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
@@ -61,12 +66,14 @@
                 </DataGrid>
             </GroupBox>
             <GroupBox Grid.Column="1" Header="Equipment Status" Margin="463,0,10,405" Grid.RowSpan="2">
-                <Canvas HorizontalAlignment="Left" Height="56" Margin="104,0,0,0" VerticalAlignment="Top" Width="124">
-                    <Label x:Name="lbl_HipotStatus" Content="Online" Height="18" Width="46" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Padding="6,-2,4,5" Canvas.Left="72"/>
-                    <Label x:Name="HipotStatus" Content="Hipot Status" Height="18" Width="64" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Padding="6,-2,4,5" Canvas.Left="2"/>
-                    <Button x:Name="btn_Connect" Content="Connect" Width="54" Visibility="Visible" Click="btn_Connect_Click" Height="20" Canvas.Left="68" Canvas.Top="16"/>
+                <Canvas HorizontalAlignment="Center" Height="56" VerticalAlignment="Center" Width="212">
+                    <Label x:Name="lbl_HipotStatus" Content="Online" Height="18" Width="46" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Padding="6,-2,4,5" Canvas.Left="72" Canvas.Top="10"/>
+                    <Label x:Name="HipotStatus" Content="Hipot Status" Height="18" Width="64" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Padding="6,-2,4,5" Canvas.Left="2" Canvas.Top="10"/>
+                    <Button x:Name="btn_Connect" Content="Connect" Width="54" Visibility="Visible" Click="btn_Connect_Click" Height="20" Canvas.Left="134" Canvas.Top="10"/>
                     <Label Content="Alarm Status" Height="18" Padding="0,0,0,0" Canvas.Top="38"/>
                     <Label x:Name="lbl_AlarmStatus" Content="OK" Height="18" Padding="0,0,0,0" Canvas.Left="72" Canvas.Top="38"/>
+                    <Button x:Name="btn_LoadHipot_File" Content="Upload Hipot File" Canvas.Left="106" Canvas.Top="33" Width="100" Click="btn_LoadHipot_File_Click"/>
+                    <PasswordBox x:Name="Password" Width="111" Height="22" Visibility="Hidden" Canvas.Top="33" Canvas.Left="99" KeyDown="Password_KeyDown" MouseEnter="Password_MouseEnter"/>
                 </Canvas>
             </GroupBox>
             <GroupBox Grid.Column="1" Header="Unit Data" Margin="10,0,270,405" Grid.RowSpan="2">
